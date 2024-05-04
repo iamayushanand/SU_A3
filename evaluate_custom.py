@@ -13,7 +13,7 @@ from core_scripts.startup_config import set_random_seed
 
 
 def produce_evaluation_file(dataset, model, device, save_path):
-    data_loader = DataLoader(dataset, batch_size=10, shuffle=False, drop_last=False)
+    data_loader = DataLoader(dataset, batch_size=6, shuffle=False, drop_last=False)
     num_correct = 0.0
     num_total = 0.0
     model.eval()
@@ -166,7 +166,7 @@ if __name__ == '__main__':
         print('Model loaded : {}'.format(args.model_path))
 
 
-    file_list = genCustom_list("/storage/custom_a3_dataset/Dataset_Speech_Assignment")
+    file_list = genCustom_list("/DATA/anand5/Audio_Work/dataset/custom/Dataset_Speech_Assignment")
     print('no. of eval trials',len(file_list))
-    eval_set=Dataset_custom_eval(list_IDs = file_list,base_dir = "/storage/custom_a3_dataset/Dataset_Speech_Assignment")
+    eval_set=Dataset_custom_eval(list_IDs = file_list,base_dir = "/DATA/anand5/Audio_Work/dataset/custom/Dataset_Speech_Assignment")
     produce_evaluation_file(eval_set, model, device, args.eval_output)   
