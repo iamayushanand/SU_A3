@@ -103,8 +103,33 @@ class Dataset_ASVspoof2021_eval(Dataset):
             x_inp = Tensor(X_pad)
             return x_inp,utt_id  
 
+def genCustom_list(dataset_dir):
+    file_list = []
+    for root, dirs, files in os.walk(dataset_dir):
+        for name in files:
+            filepath = '/'.join(os.path.join(root, name).split('/')[-2:])
+            if (".wav" in filepath) or (".mp3" in filepath):
+                file_list.append(filepath)
+    return file_list
+            
+class Dataset_custom_eval(Dataset):
+    def __init__(self, list_IDs, base_dir):
+            '''self.list_IDs	: list of strings (each string: utt key),
+               '''
+               
+            self.list_IDs = list_IDs
+            self.base_dir = base_dir
+            self.cut=64600 # take ~4 sec audio (64600 samples)
 
+    def __len__(self):
+            return len(self.list_IDs)
 
+    def __getitem__(self, index):
+            utt_id = self.list_IDs[index]
+            X, fs = librosa.load(f"{self.base_dir}/{utt_id}", sr=16000)
+            X_pad = pad(X,self.cut)
+            x_inp = Tensor(X_pad)
+            return x_inp,utt_id
 
 #--------------RawBoost data augmentation algorithms---------------------------##
 
