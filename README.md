@@ -1,3 +1,8 @@
+Speech Course Assignment 3
+===============
+The instructions and demo to run this repository have been provided in `demonstration.ipynb`. 
+The corresponding score files are pushed to the repository here too.
+
 Automatic speaker verification spoofing and deepfake detection using wav2vec 2.0 and data augmentation
 ===============
 This repository contains our implementation of the paper published in the Speaker Odyssey 2022 workshop, "Automatic speaker verification spoofing and deepfake detection using wav2vec 2.0 and data augmentation". This work produced state-of-the-art result on more challenging ASVspoof 2021 LA and DF database.
