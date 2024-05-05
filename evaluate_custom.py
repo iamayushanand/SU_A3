@@ -158,6 +158,8 @@ if __name__ == '__main__':
     model = Model(args,device)
     nb_params = sum([param.view(-1).size()[0] for param in model.parameters()])
     model =model.to(device)
+    if "DF" in args.model_path:
+        model =nn.DataParallel(model).to(device)
     print('nb_params:',nb_params)
 
     
@@ -166,7 +168,9 @@ if __name__ == '__main__':
         print('Model loaded : {}'.format(args.model_path))
 
 
-    file_list = genCustom_list("/DATA/anand5/Audio_Work/dataset/custom/Dataset_Speech_Assignment")
+    #file_list = genCustom_list("/DATA/anand5/BKUP/data/custom_dataset/Dataset_Speech_Assignment")
+    file_list = genCustom_list("/DATA/anand5/BKUP/data/for_dataset/for-2seconds/testing")
     print('no. of eval trials',len(file_list))
-    eval_set=Dataset_custom_eval(list_IDs = file_list,base_dir = "/DATA/anand5/Audio_Work/dataset/custom/Dataset_Speech_Assignment")
+    #eval_set=Dataset_custom_eval(list_IDs = file_list,base_dir = "/DATA/anand5/BKUP/data/custom_dataset/Dataset_Speech_Assignment")
+    eval_set=Dataset_custom_eval(list_IDs = file_list,base_dir = "/DATA/anand5/BKUP/data/for_dataset/for-2seconds/testing")
     produce_evaluation_file(eval_set, model, device, args.eval_output)   

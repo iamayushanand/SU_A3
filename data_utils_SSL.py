@@ -80,7 +80,7 @@ def genCustom_list(dataset_dir):
     for root, dirs, files in os.walk(dataset_dir):
         for name in files:
             filepath = '/'.join(os.path.join(root, name).split('/')[-2:])
-            if (".wav" in filepath) or (".mp3" in filepath):
+            if (".wav" in filepath) or (".mp3" in filepath) or ((".mp4" in filepath)):
                 file_list.append(filepath)
     return file_list
 

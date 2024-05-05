@@ -12,7 +12,9 @@ from data_utils_SSL import genCustom_list, Dataset_custom_train
 from model import Model
 from tensorboardX import SummaryWriter
 from core_scripts.startup_config import set_random_seed
-
+from tqdm import tqdm
+import wandb
+wandb.init(project="finetune-FOR-DF", sync_tensorboard=True)
 
 __author__ = "Hemlata Tak"
 __email__ = "tak@eurecom.fr"
@@ -82,14 +84,13 @@ def train_epoch(train_loader, model, lr,optim, device):
     weight = torch.FloatTensor([0.1, 0.9]).to(device)
     criterion = nn.CrossEntropyLoss(weight=weight)
     
-    for batch_x, batch_y in train_loader:
+    for batch_x, batch_y in tqdm(train_loader):
        
         batch_size = batch_x.size(0)
         num_total += batch_size
         
         batch_x = batch_x.to(device)
         batch_y = batch_y.view(-1).type(torch.int64).to(device)
-        print(batch_y)
         batch_out = model(batch_x)
         
         batch_loss = criterion(batch_out, batch_y)
@@ -243,6 +244,8 @@ if __name__ == '__main__':
     model = Model(args,device)
     nb_params = sum([param.view(-1).size()[0] for param in model.parameters()])
     model =model.to(device)
+    if "DF" in args.model_path:
+        model =nn.DataParallel(model).to(device)
     print('nb_params:',nb_params)
 
     #set Adam optimizer
@@ -265,22 +268,22 @@ if __name__ == '__main__':
 
      
     # define train dataloader
-    file_train = genCustom_list("/DATA/anand5/Audio_Work/dataset/FOR/for-2seconds/training")
+    file_train = genCustom_list("/DATA/anand5/BKUP/data/for_dataset/for-2seconds/training")
     
     print('no. of training trials',len(file_train))
     
-    train_set=Dataset_custom_train(file_train,"/DATA/anand5/Audio_Work/dataset/FOR/for-2seconds/training/",args, args.algo)
+    train_set=Dataset_custom_train(file_train,"/DATA/anand5/BKUP/data/for_dataset/for-2seconds/training/",args, args.algo)
     
     train_loader = DataLoader(train_set, batch_size=args.batch_size,num_workers=8, shuffle=True,drop_last = True)
     
     del train_set
     
 
-    file_dev = genCustom_list("/DATA/anand5/Audio_Work/dataset/FOR/for-2seconds/validation")
+    file_dev = genCustom_list("/DATA/anand5/BKUP/data/for_dataset/for-2seconds/validation")
     
     print('no. of validation trials',len(file_dev))
     
-    dev_set=Dataset_custom_train(file_dev,"/DATA/anand5/Audio_Work/dataset/FOR/for-2seconds/validation",args, args.algo)
+    dev_set=Dataset_custom_train(file_dev,"/DATA/anand5/BKUP/data/for_dataset/for-2seconds/validation",args, args.algo)
     
     dev_loader = DataLoader(dev_set, batch_size=args.batch_size,num_workers=8, shuffle=False)
     
@@ -303,3 +306,5 @@ if __name__ == '__main__':
                                                    running_loss,val_loss))
         torch.save(model.state_dict(), os.path.join(
             model_save_path, 'epoch_{}.pth'.format(epoch)))
+
+wandb.finish()
